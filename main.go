@@ -30,9 +30,20 @@ func postTask(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("task saved"))
 }
 
+func getTask(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+
+	}
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("hello, " + task))
+}
+
 func main() {
 
 	http.HandleFunc("/task", postTask)
+	http.HandleFunc("/", getTask)
 	http.ListenAndServe(":8080", nil)
 
 }
