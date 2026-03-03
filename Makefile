@@ -15,3 +15,7 @@ migrate-down-one:
 
 run:
 	go run cmd/api/main.go
+
+gen:
+	if not exist internal\httpapi\gen mkdir internal\httpapi\gen
+	go run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.4.1 -config oapi-codegen.yaml openapi.yaml
