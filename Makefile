@@ -27,3 +27,6 @@ lint-install:
 
 lint: lint-install
 	"$(GOLANGCI_LINT)" run ./...
+
+test:
+	go test ./... -v
