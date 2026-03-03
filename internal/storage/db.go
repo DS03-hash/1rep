@@ -3,8 +3,6 @@ package storage
 import (
 	"log"
 
-	"task-api/internal/domain"
-
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -30,12 +28,6 @@ func OpenDB(dsn string) (*gorm.DB, error) {
 		return nil, err
 	}
 	log.Println("db: current_database =", currentDB)
-
-	log.Println("db: migrate start")
-	if err := db.AutoMigrate(&domain.Task{}); err != nil {
-		return nil, err
-	}
-	log.Println("db: migrate ok")
 
 	return db, nil
 }
