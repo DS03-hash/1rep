@@ -39,7 +39,7 @@ func (s *TaskService) List() ([]domain.Task, error) {
 func (s *TaskService) Patch(id uint, task *string, isDone *bool) (*domain.Task, error) {
 	t, err := s.repo.GetByID(id)
 	if err != nil {
-		// здесь можно точнее различать ErrRecordNotFound, но минимально оставим так
+
 		return nil, ErrNotFound
 	}
 

@@ -51,7 +51,7 @@ func (h *TaskHandler) TaskByID(w http.ResponseWriter, r *http.Request) {
 	case http.MethodPatch:
 		h.patchTask(w, r, uid)
 	case http.MethodPut:
-		h.patchTask(w, r, uid) // минимально: PUT как PATCH
+		h.patchTask(w, r, uid)
 	case http.MethodDelete:
 		h.deleteTask(w, uid)
 	default:
