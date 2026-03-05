@@ -16,13 +16,21 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	// Подлкючение к БД
 
 	repo := repository.NewGormTaskRepository(db)
+	// Инициализация репозитория
+
 	svc := service.NewTaskService(repo)
+	// Инициализация сервиса
+
 	h := handlers.NewTaskHandler(svc)
+	// Инициализация HTTP-обработчика
 
 	mux := router.New(h)
+	// Инициализация маршрутизатора
 
 	log.Println("listening on :8080")
 	log.Fatal(http.ListenAndServe(":8080", mux))
+	// Запуск HTTP-сервера
 }
