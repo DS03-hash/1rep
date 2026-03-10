@@ -37,6 +37,7 @@ lint-install:
 # Запустить линтеры.
 lint:
 	"$(GOLANGCI_LINT)" run ./...
+	@echo "Lint OK"
 
 # Запустить go-тесты.
 test:
