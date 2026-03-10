@@ -29,20 +29,6 @@ func NewTaskHandler(svc *service.TaskService) *TaskHandler {
 // Она принимает ссылку на TaskService и возвращает новый экземпляр TaskHandler, который будет использовать
 // этот сервис для обработки запросов.
 
-type createTaskRequest struct {
-	Task   string `json:"task"`
-	IsDone bool   `json:"is_done"`
-}
-
-// createTaskRequest - это структура, которая представляет собой тело запроса для создания новой задачи.
-
-type patchTaskRequest struct {
-	Task   *string `json:"task"`
-	IsDone *bool   `json:"is_done"`
-}
-
-// patchTaskRequest - это структура, которая представляет собой тело запроса для обновления существующей задачи.
-
 func (h *TaskHandler) Tasks(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodPost:
@@ -102,7 +88,7 @@ func (h *TaskHandler) createTask(w http.ResponseWriter, r *http.Request) {
 }
 
 // createTask - это метод, который обрабатывает HTTP-запросы для создания новой задачи.
-// Он декодирует JSON-тело запроса в структуру createTaskRequest, вызывает метод Create сервиса для создания новой задачи и
+// Он декодирует JSON-тело запроса в структуру gen.CreateTaskRequest, вызывает метод Create сервиса для создания новой задачи и
 //  возвращает созданную задачу в формате JSON.
 // Если JSON некорректный или входные данные недопустимые, возвращается соответствующая ошибка.
 
@@ -144,7 +130,7 @@ func (h *TaskHandler) patchTask(w http.ResponseWriter, r *http.Request, id uint)
 }
 
 // patchTask - это метод, который обрабатывает HTTP-запросы для обновления существующей задачи.
-// Он декодирует JSON-тело запроса в структуру patchTaskRequest, вызывает метод Patch сервиса для обновления задачи и
+// Он декодирует JSON-тело запроса в структуру gen.PatchTaskRequest, вызывает метод Patch сервиса для обновления задачи и
 //  возвращает обновленную задачу в формате JSON.
 // Если JSON некорректный, задача не найдена или входные данные недопустимые, возвращается соответствующая ошибка.
 
@@ -237,3 +223,5 @@ func writeError(w http.ResponseWriter, status int, message string) {
 // writeJSON - это вспомогательная функция, которая записывает данные в формате JSON в HTTP-ответ.
 // Она устанавливает заголовок "Content-Type" в "application/json", устанавливает статус ответа и кодирует переданное значение в JSON.
 // Если кодирование не удалось, ошибка игнорируется, так как это вспомогательная функция для упрощения записи JSON-ответов.
+
+

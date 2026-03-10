@@ -3,50 +3,44 @@ MIGRATE := migrate -path ./migrations -database "$(DB_DSN)"
 GOLANGCI_LINT_VERSION := v1.64.8
 GOLANGCI_LINT := $(shell go env GOPATH)\bin\golangci-lint.exe
 
+.PHONY: migrate-new migrate migrate-down migrate-down-one run gen lint-install lint test check
+
+# Создать новую миграцию: make migrate-new NAME=add_tasks_table
 migrate-new:
 	migrate create -ext sql -dir ./migrations $(NAME)
 
-	// migrate-new - это цель Makefile, которая создает новую миграцию с помощью инструмента migrate. 
-	// Она принимает аргумент NAME, который указывает имя новой миграции. Команда migrate create генерирует два файла: 
-	// один для применения миграции (up) и другой для отката миграции (down), оба с расширением .sql и помещает их в директорию ./migrations.
-
+# Применить все новые миграции.
 migrate:
-	$(MIGRATE) up 
+	$(MIGRATE) up
 
-	// migrate - это цель Makefile, которая выполняет все миграции в директории ./migrations, применяя их к базе данных, указанной в переменной DB_DSN.
-	// Команда $(MIGRATE) up запускает процесс миграции, который последовательно применяет все миграции, которые еще не были применены к базе данных. 
-	// Это позволяет обновить структуру базы данных в соответствии с определенными миграциями.
-
+# Откатить все применённые миграции.
 migrate-down:
-	$(MIGRATE) down 
+	$(MIGRATE) down
 
-	// migrate-down - это цель Makefile, которая откатывает все миграции в директории ./migrations, возвращая базу данных к предыдущему состоянию.
-	// Команда $(MIGRATE) down запускает процесс отката миграции, который последовательно откатывает все миграции, которые были применены к базе данных. 
-	// Это может быть полезно для восстановления базы данных в случае ошибок или для тестирования процесса миграции.
-
+# Откатить одну последнюю миграцию.
 migrate-down-one:
 	$(MIGRATE) down 1
 
-	// migrate-down-one - это цель Makefile, которая откатывает последнюю примененную миграцию в директории ./migrations, возвращая базу данных к предыдущему состоянию.
-	// Команда $(MIGRATE) down 1 запускает процесс отката миграции, который откатывает только одну последнюю примененную миграцию. 
-	// Это может быть полезно для восстановления базы данных в случае ошибок, связанных с последней миграцией, или для тестирования процесса миграции.
-
+# Запустить API-сервис.
 run:
 	go run cmd/api/main.go
 
-<<<<<<< HEAD
+# Сгенерировать типы и интерфейсы из OpenAPI.
 gen:
 	if not exist internal\httpapi\gen mkdir internal\httpapi\gen
 	go run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.4.1 -config oapi-codegen.yaml openapi.yaml
 
+# Установить golangci-lint локально.
 lint-install:
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint@$(GOLANGCI_LINT_VERSION)
 
-lint: lint-install
+# Запустить линтеры.
+lint:
 	"$(GOLANGCI_LINT)" run ./...
-=======
-	// run - это цель Makefile, которая запускает приложение, используя команду go run для выполнения файла main.go, который находится в директории cmd/api.
-	// Эта команда компилирует и запускает приложение, позволяя вам тестировать его и взаимодействовать с ним через API, который он предоставляет.
 
+# Запустить go-тесты.
+test:
+	go test ./...
 
->>>>>>> 9217c2c (add comment to all code)
+# Запустить все локальные проверки перед push.
+check: test lint
