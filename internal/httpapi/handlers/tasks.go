@@ -15,33 +15,34 @@ import (
 type TaskHandler struct {
 	svc *service.TaskService
 }
-// TaskHandler - это структура, которая содержит ссылку на сервис TaskService. 
-// Она отвечает за обработку HTTP-запросов, связанных с задачами. 
-// Внутри TaskHandler определены методы для создания задачи, получения списка задач, обновления задачи и удаления задачи. 
+
+// TaskHandler - это структура, которая содержит ссылку на сервис TaskService.
+// Она отвечает за обработку HTTP-запросов, связанных с задачами.
+// Внутри TaskHandler определены методы для создания задачи, получения списка задач, обновления задачи и удаления задачи.
 // Эти методы обрабатывают входящие HTTP-запросы, взаимодействуют с сервисом и возвращают соответствующие HTTP-ответы.
 
 func NewTaskHandler(svc *service.TaskService) *TaskHandler {
 	return &TaskHandler{svc: svc}
 }
-// NewTaskHandler - это функция-конструктор для TaskHandler. 
-// Она принимает ссылку на TaskService и возвращает новый экземпляр TaskHandler, который будет использовать 
+
+// NewTaskHandler - это функция-конструктор для TaskHandler.
+// Она принимает ссылку на TaskService и возвращает новый экземпляр TaskHandler, который будет использовать
 // этот сервис для обработки запросов.
 
-<<<<<<< HEAD
-=======
 type createTaskRequest struct {
 	Task   string `json:"task"`
 	IsDone bool   `json:"is_done"`
 }
+
 // createTaskRequest - это структура, которая представляет собой тело запроса для создания новой задачи.
 
 type patchTaskRequest struct {
 	Task   *string `json:"task"`
 	IsDone *bool   `json:"is_done"`
 }
+
 // patchTaskRequest - это структура, которая представляет собой тело запроса для обновления существующей задачи.
 
->>>>>>> 9217c2c (add comment to all code)
 func (h *TaskHandler) Tasks(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodPost:
@@ -52,8 +53,9 @@ func (h *TaskHandler) Tasks(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusMethodNotAllowed, "method not allowed")
 	}
 }
+
 // Tasks - это метод, который обрабатывает HTTP-запросы на пути "/tasks".
-// В зависимости от HTTP-метода, он вызывает соответствующий метод для создания новой задачи (POST) или получения списка задач (GET). 
+// В зависимости от HTTP-метода, он вызывает соответствующий метод для создания новой задачи (POST) или получения списка задач (GET).
 // Если HTTP-метод не поддерживается, возвращается ошибка "method not allowed".
 
 func (h *TaskHandler) TaskByID(w http.ResponseWriter, r *http.Request) {
@@ -73,9 +75,10 @@ func (h *TaskHandler) TaskByID(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusMethodNotAllowed, "method not allowed")
 	}
 }
+
 // TaskByID - это метод, который обрабатывает HTTP-запросы на пути "/tasks/{id}".
 // Он извлекает идентификатор задачи из URL и в зависимости от HTTP-метода вызывает соответствующий метод
-//  для обновления задачи (PATCH или PUT) или удаления задачи (DELETE). 
+//  для обновления задачи (PATCH или PUT) или удаления задачи (DELETE).
 // Если HTTP-метод не поддерживается, возвращается ошибка "method not allowed".
 
 func (h *TaskHandler) createTask(w http.ResponseWriter, r *http.Request) {
@@ -97,9 +100,10 @@ func (h *TaskHandler) createTask(w http.ResponseWriter, r *http.Request) {
 
 	writeJSON(w, http.StatusCreated, toCreateTaskResponse(*t))
 }
+
 // createTask - это метод, который обрабатывает HTTP-запросы для создания новой задачи.
 // Он декодирует JSON-тело запроса в структуру createTaskRequest, вызывает метод Create сервиса для создания новой задачи и
-//  возвращает созданную задачу в формате JSON. 
+//  возвращает созданную задачу в формате JSON.
 // Если JSON некорректный или входные данные недопустимые, возвращается соответствующая ошибка.
 
 func (h *TaskHandler) listTasks(w http.ResponseWriter) {
@@ -110,8 +114,9 @@ func (h *TaskHandler) listTasks(w http.ResponseWriter) {
 	}
 	writeJSON(w, http.StatusOK, toListTasksResponse(tasks))
 }
+
 // listTasks - это метод, который обрабатывает HTTP-запросы для получения списка всех задач.
-// Он вызывает метод List сервиса для получения всех задач и возвращает их в формате JSON. 
+// Он вызывает метод List сервиса для получения всех задач и возвращает их в формате JSON.
 // Если возникает ошибка при получении задач, возвращается ошибка "internal error".
 
 func (h *TaskHandler) patchTask(w http.ResponseWriter, r *http.Request, id uint) {
@@ -137,9 +142,10 @@ func (h *TaskHandler) patchTask(w http.ResponseWriter, r *http.Request, id uint)
 
 	writeJSON(w, http.StatusOK, toPatchTaskResponse(*t))
 }
+
 // patchTask - это метод, который обрабатывает HTTP-запросы для обновления существующей задачи.
 // Он декодирует JSON-тело запроса в структуру patchTaskRequest, вызывает метод Patch сервиса для обновления задачи и
-//  возвращает обновленную задачу в формате JSON. 
+//  возвращает обновленную задачу в формате JSON.
 // Если JSON некорректный, задача не найдена или входные данные недопустимые, возвращается соответствующая ошибка.
 
 func (h *TaskHandler) deleteTask(w http.ResponseWriter, id uint) {
@@ -153,10 +159,11 @@ func (h *TaskHandler) deleteTask(w http.ResponseWriter, id uint) {
 	}
 	w.WriteHeader(http.StatusNoContent)
 }
+
 // deleteTask - это метод, который обрабатывает HTTP-запросы для удаления существующей задачи.
-// Он вызывает метод Delete сервиса для удаления задачи по идентификатору. 
-// Если задача не найдена, возвращается ошибка "not found". 
-// Если возникает другая ошибка, возвращается ошибка "internal error". 
+// Он вызывает метод Delete сервиса для удаления задачи по идентификатору.
+// Если задача не найдена, возвращается ошибка "not found".
+// Если возникает другая ошибка, возвращается ошибка "internal error".
 // Если удаление прошло успешно, возвращается статус "204 No Content".
 
 func parseIDFromPath(path, prefix string) (int, error) {
@@ -170,9 +177,10 @@ func parseIDFromPath(path, prefix string) (int, error) {
 	}
 	return strconv.Atoi(raw)
 }
-// parseIDFromPath - это вспомогательная функция, которая извлекает идентификатор из URL-пути. 
+
+// parseIDFromPath - это вспомогательная функция, которая извлекает идентификатор из URL-пути.
 // Она проверяет, что путь начинается с указанного префикса, удаляет префикс и любые ведущие или завершающие слэши,
-//  а затем пытается преобразовать оставшуюся строку в целое число. 
+//  а затем пытается преобразовать оставшуюся строку в целое число.
 // Если путь не соответствует ожидаемому формату или идентификатор не является числом, возвращается ошибка.
 
 func toCreateTaskResponse(t domain.Task) gen.CreateTaskResponse {
@@ -183,6 +191,9 @@ func toCreateTaskResponse(t domain.Task) gen.CreateTaskResponse {
 	}
 }
 
+// toCreateTaskResponse - это функция, которая преобразует структуру domain.Task в структуру gen.CreateTaskResponse.
+// Она используется для формирования ответа на запрос создания новой задачи, возвращая только необходимые поля Id, Task и IsDone.
+
 func toPatchTaskResponse(t domain.Task) gen.PatchTaskResponse {
 	return gen.PatchTaskResponse{
 		Id:     int64(t.ID),
@@ -190,6 +201,9 @@ func toPatchTaskResponse(t domain.Task) gen.PatchTaskResponse {
 		IsDone: t.IsDone,
 	}
 }
+
+// toPatchTaskResponse - это функция, которая преобразует структуру domain.Task в структуру gen.PatchTaskResponse.
+// Она используется для формирования ответа на запрос обновления существующей задачи, возвращая только необходимые поля Id, Task и IsDone.
 
 func toListTasksResponse(tasks []domain.Task) gen.ListTasksResponse {
 	out := make(gen.ListTasksResponse, 0, len(tasks))
@@ -203,18 +217,23 @@ func toListTasksResponse(tasks []domain.Task) gen.ListTasksResponse {
 	return out
 }
 
+// toListTasksResponse - это функция, которая преобразует срез структур domain.Task в срез структур gen.Task.
+// Она используется для формирования ответа на запрос получения списка задач, возвращая только необходимые поля Id, Task и IsDone для каждой задачи.
+
 func writeJSON(w http.ResponseWriter, status int, v any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	_ = json.NewEncoder(w).Encode(v)
 }
-<<<<<<< HEAD
+
+// writeJSON - это вспомогательная функция, которая записывает данные в формате JSON в HTTP-ответ.
+// Она устанавливает заголовок "Content-Type" в "application/json", устанавливает статус ответа и кодирует переданное значение в JSON.
+// Если кодирование не удалось, ошибка игнорируется, так как это вспомогательная функция для упрощения записи JSON-ответов.
 
 func writeError(w http.ResponseWriter, status int, message string) {
 	writeJSON(w, status, gen.ErrorResponse{Message: message})
 }
-=======
+
 // writeJSON - это вспомогательная функция, которая записывает данные в формате JSON в HTTP-ответ.
-// Она устанавливает заголовок "Content-Type" в "application/json", устанавливает статус ответа и кодирует переданное значение в JSON. 
+// Она устанавливает заголовок "Content-Type" в "application/json", устанавливает статус ответа и кодирует переданное значение в JSON.
 // Если кодирование не удалось, ошибка игнорируется, так как это вспомогательная функция для упрощения записи JSON-ответов.
->>>>>>> 9217c2c (add comment to all code)
