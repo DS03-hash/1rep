@@ -16,10 +16,12 @@ type TaskHandler struct {
 	svc *service.TaskService
 }
 
+// NewTaskHandler создает HTTP-обработчик задач.
 func NewTaskHandler(svc *service.TaskService) *TaskHandler {
 	return &TaskHandler{svc: svc}
 }
 
+// Tasks маршрутизирует запросы к коллекции задач по HTTP-методу.
 func (h *TaskHandler) Tasks(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodPost:
@@ -31,6 +33,7 @@ func (h *TaskHandler) Tasks(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// TaskByID маршрутизирует запросы к одной задаче по ее идентификатору.
 func (h *TaskHandler) TaskByID(w http.ResponseWriter, r *http.Request) {
 	id, err := parseIDFromPath(r.URL.Path, "/tasks/")
 	if err != nil {
@@ -49,6 +52,7 @@ func (h *TaskHandler) TaskByID(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// createTask декодирует тело запроса и создает задачу.
 func (h *TaskHandler) createTask(w http.ResponseWriter, r *http.Request) {
 	var req gen.CreateTaskRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -69,6 +73,7 @@ func (h *TaskHandler) createTask(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusCreated, toCreateTaskResponse(*t))
 }
 
+// listTasks возвращает список всех задач.
 func (h *TaskHandler) listTasks(w http.ResponseWriter) {
 	tasks, err := h.svc.List()
 	if err != nil {
@@ -78,6 +83,7 @@ func (h *TaskHandler) listTasks(w http.ResponseWriter) {
 	writeJSON(w, http.StatusOK, toListTasksResponse(tasks))
 }
 
+// patchTask частично обновляет задачу по id.
 func (h *TaskHandler) patchTask(w http.ResponseWriter, r *http.Request, id uint) {
 	var req gen.PatchTaskRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -102,6 +108,7 @@ func (h *TaskHandler) patchTask(w http.ResponseWriter, r *http.Request, id uint)
 	writeJSON(w, http.StatusOK, toPatchTaskResponse(*t))
 }
 
+// deleteTask удаляет задачу по id.
 func (h *TaskHandler) deleteTask(w http.ResponseWriter, id uint) {
 	if err := h.svc.Delete(id); err != nil {
 		if errors.Is(err, service.ErrNotFound) {
@@ -114,6 +121,7 @@ func (h *TaskHandler) deleteTask(w http.ResponseWriter, id uint) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
+// parseIDFromPath извлекает числовой id из URL-пути.
 func parseIDFromPath(path, prefix string) (int, error) {
 	if !strings.HasPrefix(path, prefix) {
 		return 0, errors.New("bad path")
@@ -126,6 +134,7 @@ func parseIDFromPath(path, prefix string) (int, error) {
 	return strconv.Atoi(raw)
 }
 
+// toCreateTaskResponse преобразует доменную задачу в ответ create.
 func toCreateTaskResponse(t domain.Task) gen.CreateTaskResponse {
 	return gen.CreateTaskResponse{
 		Id:     int64(t.ID),
@@ -134,6 +143,7 @@ func toCreateTaskResponse(t domain.Task) gen.CreateTaskResponse {
 	}
 }
 
+// toPatchTaskResponse преобразует доменную задачу в ответ patch.
 func toPatchTaskResponse(t domain.Task) gen.PatchTaskResponse {
 	return gen.PatchTaskResponse{
 		Id:     int64(t.ID),
@@ -142,6 +152,7 @@ func toPatchTaskResponse(t domain.Task) gen.PatchTaskResponse {
 	}
 }
 
+// toListTasksResponse преобразует список доменных задач в API-ответ.
 func toListTasksResponse(tasks []domain.Task) gen.ListTasksResponse {
 	out := make(gen.ListTasksResponse, 0, len(tasks))
 	for _, t := range tasks {
@@ -154,12 +165,14 @@ func toListTasksResponse(tasks []domain.Task) gen.ListTasksResponse {
 	return out
 }
 
+// writeJSON отправляет JSON-ответ с указанным статусом.
 func writeJSON(w http.ResponseWriter, status int, v any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	_ = json.NewEncoder(w).Encode(v)
 }
 
+// writeError отправляет стандартную ошибку API в JSON-формате.
 func writeError(w http.ResponseWriter, status int, message string) {
 	writeJSON(w, status, gen.ErrorResponse{Message: message})
 }

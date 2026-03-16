@@ -7,6 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// OpenDB открывает подключение к Postgres и проверяет его доступность.
 func OpenDB(dsn string) (*gorm.DB, error) {
 	log.Println("db: opening connection...")
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})

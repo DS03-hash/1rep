@@ -11,6 +11,7 @@ import (
 	"task-api/internal/storage"
 )
 
+// main собирает зависимости приложения и запускает HTTP-сервер.
 func main() {
 	db, err := storage.OpenDB("host=localhost user=postgres password=postgres dbname=task_api port=5432 sslmode=disable TimeZone=Europe/Warsaw")
 	if err != nil {

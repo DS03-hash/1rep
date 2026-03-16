@@ -13,6 +13,7 @@ import (
 	"task-api/internal/domain"
 )
 
+// newMockDB поднимает sqlmock и возвращает cleanup для проверки ожиданий.
 func newMockDB(t *testing.T) (*gorm.DB, sqlmock.Sqlmock, func()) {
 	t.Helper()
 
@@ -82,6 +83,7 @@ func TestGormTaskRepository_List(t *testing.T) {
 	})
 }
 
+// TestGormTaskRepository_Update проверяет обновление задачи в репозитории.
 func TestGormTaskRepository_Update(t *testing.T) {
 	t.Parallel()
 
@@ -128,6 +130,7 @@ func TestGormTaskRepository_Update(t *testing.T) {
 	})
 }
 
+// TestGormTaskRepository_DeleteByID проверяет удаление задачи по идентификатору.
 func TestGormTaskRepository_DeleteByID(t *testing.T) {
 	t.Parallel()
 

@@ -17,10 +17,12 @@ type TaskService struct {
 	repo repository.TaskRepository
 }
 
+// NewTaskService создает сервис задач с переданным репозиторием.
 func NewTaskService(repo repository.TaskRepository) *TaskService {
 	return &TaskService{repo: repo}
 }
 
+// Create валидирует и создает новую задачу.
 func (s *TaskService) Create(task string, isDone bool) (*domain.Task, error) {
 	if strings.TrimSpace(task) == "" {
 		return nil, ErrInvalidInput
@@ -32,10 +34,12 @@ func (s *TaskService) Create(task string, isDone bool) (*domain.Task, error) {
 	return t, nil
 }
 
+// List возвращает список задач из репозитория.
 func (s *TaskService) List() ([]domain.Task, error) {
 	return s.repo.List()
 }
 
+// Patch частично обновляет поля задачи по идентификатору.
 func (s *TaskService) Patch(id uint, task *string, isDone *bool) (*domain.Task, error) {
 	t, err := s.repo.GetByID(id)
 	if err != nil {
@@ -59,6 +63,7 @@ func (s *TaskService) Patch(id uint, task *string, isDone *bool) (*domain.Task, 
 	return t, nil
 }
 
+// Delete удаляет задачу по идентификатору.
 func (s *TaskService) Delete(id uint) error {
 	rows, err := s.repo.DeleteByID(id)
 	if err != nil {

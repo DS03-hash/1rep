@@ -11,6 +11,7 @@ import (
 	"task-api/internal/domain"
 )
 
+// TestTaskService_Create проверяет сценарии создания задачи в сервисе.
 func TestTaskService_Create(t *testing.T) {
 	t.Parallel()
 
@@ -91,6 +92,7 @@ func TestTaskService_Create(t *testing.T) {
 	}
 }
 
+// TestTaskService_List проверяет получение списка задач из сервиса.
 func TestTaskService_List(t *testing.T) {
 	t.Parallel()
 
@@ -147,6 +149,7 @@ func TestTaskService_List(t *testing.T) {
 	}
 }
 
+// TestTaskService_Patch проверяет частичное обновление задачи.
 func TestTaskService_Patch(t *testing.T) {
 	t.Parallel()
 
@@ -255,6 +258,7 @@ func TestTaskService_Patch(t *testing.T) {
 	}
 }
 
+// TestTaskService_Delete проверяет удаление задачи в сервисе.
 func TestTaskService_Delete(t *testing.T) {
 	t.Parallel()
 
