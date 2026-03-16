@@ -3,8 +3,6 @@ package storage
 import (
 	"log"
 
-	"task-api/internal/domain"
-
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -31,11 +29,12 @@ func OpenDB(dsn string) (*gorm.DB, error) {
 	}
 	log.Println("db: current_database =", currentDB)
 
-	log.Println("db: migrate start")
-	if err := db.AutoMigrate(&domain.Task{}); err != nil {
-		return nil, err
-	}
-	log.Println("db: migrate ok")
-
 	return db, nil
 }
+// OpenDB - это функция, которая открывает соединение с базой данных PostgreSQL с помощью GORM.
+// Она принимает строку подключения (DSN) в качестве аргумента и возвращает указатель на gorm.DB и ошибку, если операция не удалась.
+// Внутри функции выполняются следующие шаги:
+// 1. Открытие соединения с базой данных с помощью gorm.Open и драйвера postgres.
+// 2. Получение объекта sql.DB из gorm.DB для выполнения операции Ping, чтобы проверить, что соединение успешно установлено.
+// 3. Выполнение SQL-запроса для получения текущей базы данных и вывод ее имени в лог.
+// 4. Возвращение указателя на gorm.DB и nil, если все операции прошли успешно, или возвращение ошибки, если что-то пошло не так.
