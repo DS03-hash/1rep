@@ -30,6 +30,9 @@ gen:
 	if not exist internal\httpapi\gen mkdir internal\httpapi\gen
 	go run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.4.1 -config oapi-codegen.yaml openapi.yaml
 
+# Запустить все локальные проверки перед push.
+check: test lint
+
 # Установить golangci-lint локально.
 lint-install:
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint@$(GOLANGCI_LINT_VERSION)
@@ -43,5 +46,4 @@ lint:
 test:
 	go test ./...
 
-# Запустить все локальные проверки перед push.
-check: test lint
+
