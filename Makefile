@@ -25,8 +25,10 @@ gen:
 lint-install:
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint@$(GOLANGCI_LINT_VERSION)
 
-lint: lint-install
+lint:
 	"$(GOLANGCI_LINT)" run ./...
+	@echo "Lint OK"
+
 
 test:
 	go test ./... -v
