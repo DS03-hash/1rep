@@ -23,11 +23,11 @@ func NewTaskService(repo repository.TaskRepository) *TaskService {
 }
 
 // Create валидирует и создает новую задачу.
-func (s *TaskService) Create(task string, isDone bool) (*domain.Task, error) {
-	if strings.TrimSpace(task) == "" {
+func (s *TaskService) Create(task string, isDone bool, userID uint) (*domain.Task, error) {
+	if strings.TrimSpace(task) == "" || userID == 0 {
 		return nil, ErrInvalidInput
 	}
-	t := &domain.Task{Task: task, IsDone: isDone}
+	t := &domain.Task{Task: task, IsDone: isDone, UserID: userID}
 	if err := s.repo.Create(t); err != nil {
 		return nil, err
 	}

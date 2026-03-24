@@ -44,9 +44,9 @@ func TestGormTaskRepository_List(t *testing.T) {
 		db, mock, cleanup := newMockDB(t)
 		defer cleanup()
 
-		rows := sqlmock.NewRows([]string{"id", "task", "is_done", "deleted_at"}).
-			AddRow(1, "Write tests", false, nil).
-			AddRow(2, "Review PR", true, nil)
+		rows := sqlmock.NewRows([]string{"id", "task", "is_done", "user_id", "deleted_at"}).
+			AddRow(1, "Write tests", false, 10, nil).
+			AddRow(2, "Review PR", true, 20, nil)
 
 		mock.ExpectQuery(`SELECT .* FROM "tasks" WHERE "tasks"\."deleted_at" IS NULL`).
 			WillReturnRows(rows)
@@ -59,9 +59,11 @@ func TestGormTaskRepository_List(t *testing.T) {
 		assert.Equal(t, uint(1), got[0].ID)
 		assert.Equal(t, "Write tests", got[0].Task)
 		assert.False(t, got[0].IsDone)
+		assert.Equal(t, uint(10), got[0].UserID)
 		assert.Equal(t, uint(2), got[1].ID)
 		assert.Equal(t, "Review PR", got[1].Task)
 		assert.True(t, got[1].IsDone)
+		assert.Equal(t, uint(20), got[1].UserID)
 	})
 
 	t.Run("query error", func(t *testing.T) {
@@ -93,11 +95,11 @@ func TestGormTaskRepository_Update(t *testing.T) {
 		db, mock, cleanup := newMockDB(t)
 		defer cleanup()
 
-		task := &domain.Task{ID: 3, Task: "Updated task", IsDone: true}
+		task := &domain.Task{ID: 3, Task: "Updated task", IsDone: true, UserID: 15}
 
 		mock.ExpectBegin()
 		mock.ExpectExec(`UPDATE "tasks" SET .* WHERE .*"id" = \$[0-9]+`).
-			WithArgs("Updated task", true, sqlmock.AnyArg(), 3).
+			WithArgs("Updated task", true, uint(15), sqlmock.AnyArg(), 3).
 			WillReturnResult(sqlmock.NewResult(0, 1))
 		mock.ExpectCommit()
 
@@ -113,12 +115,12 @@ func TestGormTaskRepository_Update(t *testing.T) {
 		db, mock, cleanup := newMockDB(t)
 		defer cleanup()
 
-		task := &domain.Task{ID: 4, Task: "Task", IsDone: false}
+		task := &domain.Task{ID: 4, Task: "Task", IsDone: false, UserID: 12}
 		expectedErr := errors.New("update failed")
 
 		mock.ExpectBegin()
 		mock.ExpectExec(`UPDATE "tasks" SET .* WHERE .*"id" = \$[0-9]+`).
-			WithArgs("Task", false, sqlmock.AnyArg(), 4).
+			WithArgs("Task", false, uint(12), sqlmock.AnyArg(), 4).
 			WillReturnError(expectedErr)
 		mock.ExpectRollback()
 

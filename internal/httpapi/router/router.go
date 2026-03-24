@@ -7,9 +7,11 @@ import (
 )
 
 // New настраивает HTTP-маршруты для API задач.
-func New(h *handlers.TaskHandler) *http.ServeMux {
+func New(taskHandlers *handlers.TaskHandler, userHandlers *handlers.UserHandlers) *http.ServeMux {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/tasks", h.Tasks)
-	mux.HandleFunc("/tasks/", h.TaskByID)
+	mux.HandleFunc("/tasks", taskHandlers.Tasks)
+	mux.HandleFunc("/tasks/", taskHandlers.TaskByID)
+	mux.HandleFunc("/users", userHandlers.Users)
+	mux.HandleFunc("/users/", userHandlers.UserByID)
 	return mux
 }

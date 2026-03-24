@@ -9,6 +9,7 @@ import (
 	"task-api/internal/repository"
 	"task-api/internal/service"
 	"task-api/internal/storage"
+	userSvc "task-api/internal/userService"
 )
 
 // main собирает зависимости приложения и запускает HTTP-сервер.
@@ -18,11 +19,15 @@ func main() {
 		log.Fatal(err)
 	}
 
-	repo := repository.NewGormTaskRepository(db)
-	svc := service.NewTaskService(repo)
-	h := handlers.NewTaskHandler(svc)
+	tasksRepo := repository.NewGormTaskRepository(db)
+	tasksService := service.NewTaskService(tasksRepo)
+	taskHandlers := handlers.NewTaskHandler(tasksService)
 
-	mux := router.New(h)
+	userRepo := userSvc.NewGormRepository(db)
+	userService := userSvc.NewService(userRepo)
+	userHandlers := handlers.NewUserHandlers(userService)
+
+	mux := router.New(taskHandlers, userHandlers)
 
 	log.Println("listening on :8080")
 	log.Fatal(http.ListenAndServe(":8080", mux))

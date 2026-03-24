@@ -1,0 +1,4 @@
+DROP INDEX IF EXISTS idx_tasks_user_id;
+
+ALTER TABLE tasks
+    DROP COLUMN IF EXISTS user_id;

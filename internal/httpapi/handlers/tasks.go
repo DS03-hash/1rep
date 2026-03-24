@@ -59,11 +59,15 @@ func (h *TaskHandler) createTask(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusBadRequest, "bad json")
 		return
 	}
+	if req.UserId <= 0 {
+		writeError(w, http.StatusBadRequest, "invalid input")
+		return
+	}
 
-	t, err := h.svc.Create(req.Task, req.IsDone)
+	t, err := h.svc.Create(req.Task, req.IsDone, uint(req.UserId))
 	if err != nil {
 		if errors.Is(err, service.ErrInvalidInput) {
-			writeError(w, http.StatusBadRequest, "task is required")
+			writeError(w, http.StatusBadRequest, "invalid input")
 			return
 		}
 		writeError(w, http.StatusInternalServerError, "internal error")
@@ -140,6 +144,7 @@ func toCreateTaskResponse(t domain.Task) gen.CreateTaskResponse {
 		Id:     int64(t.ID),
 		Task:   t.Task,
 		IsDone: t.IsDone,
+		UserId: int64(t.UserID),
 	}
 }
 
@@ -149,6 +154,7 @@ func toPatchTaskResponse(t domain.Task) gen.PatchTaskResponse {
 		Id:     int64(t.ID),
 		Task:   t.Task,
 		IsDone: t.IsDone,
+		UserId: int64(t.UserID),
 	}
 }
 
@@ -160,6 +166,7 @@ func toListTasksResponse(tasks []domain.Task) gen.ListTasksResponse {
 			Id:     int64(t.ID),
 			Task:   t.Task,
 			IsDone: t.IsDone,
+			UserId: int64(t.UserID),
 		})
 	}
 	return out

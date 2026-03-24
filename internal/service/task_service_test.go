@@ -21,6 +21,7 @@ func TestTaskService_Create(t *testing.T) {
 		name       string
 		task       string
 		isDone     bool
+		userID     uint
 		setupMock  func(repo *TaskRepositoryMock)
 		wantErr    error
 		assertTask func(t *testing.T, got *domain.Task)
@@ -29,9 +30,10 @@ func TestTaskService_Create(t *testing.T) {
 			name:   "success",
 			task:   "write unit tests",
 			isDone: false,
+			userID: 12,
 			setupMock: func(repo *TaskRepositoryMock) {
 				repo.On("Create", mock.MatchedBy(func(task *domain.Task) bool {
-					return task.Task == "write unit tests" && !task.IsDone
+					return task.Task == "write unit tests" && !task.IsDone && task.UserID == 12
 				})).
 					Return(nil).
 					Once()
@@ -40,21 +42,31 @@ func TestTaskService_Create(t *testing.T) {
 				require.NotNil(t, got)
 				assert.Equal(t, "write unit tests", got.Task)
 				assert.False(t, got.IsDone)
+				assert.Equal(t, uint(12), got.UserID)
 			},
 		},
 		{
-			name:    "invalid input",
+			name:    "invalid task input",
 			task:    "   ",
 			isDone:  true,
+			userID:  5,
+			wantErr: ErrInvalidInput,
+		},
+		{
+			name:    "invalid user id",
+			task:    "task with bad user",
+			isDone:  false,
+			userID:  0,
 			wantErr: ErrInvalidInput,
 		},
 		{
 			name:   "repository returns error",
 			task:   "create task",
 			isDone: true,
+			userID: 4,
 			setupMock: func(repo *TaskRepositoryMock) {
 				repo.On("Create", mock.MatchedBy(func(task *domain.Task) bool {
-					return task.Task == "create task" && task.IsDone
+					return task.Task == "create task" && task.IsDone && task.UserID == 4
 				})).
 					Return(repoErr).
 					Once()
@@ -74,7 +86,7 @@ func TestTaskService_Create(t *testing.T) {
 			}
 			svc := NewTaskService(repo)
 
-			got, err := svc.Create(tt.task, tt.isDone)
+			got, err := svc.Create(tt.task, tt.isDone, tt.userID)
 
 			if tt.wantErr != nil {
 				require.Error(t, err)

@@ -1,0 +1,4 @@
+ALTER TABLE tasks
+    ADD COLUMN IF NOT EXISTS user_id INTEGER REFERENCES users(id) ON DELETE CASCADE;
+
+CREATE INDEX IF NOT EXISTS idx_tasks_user_id ON tasks(user_id);
